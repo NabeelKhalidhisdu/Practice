@@ -1,0 +1,155 @@
+<div class="container">
+  <br>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Student Form
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group mb-3">
+              <label>First Name</label>
+              <input type="text" formControlName="firstName" class="form-control"
+                [ngClass]="{ 'is-invalid': submitted && f['firstName'].errors }" />
+              <div *ngIf="submitted && f['firstName'].errors" class="invalid-feedback">
+                <div *ngIf="f['firstName'].errors['required']">First Name is required</div>
+              </div>
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label" for="last-name">Last Name: </label>
+              <input autocomplete="off" class="form-control" id="last-name" type="text" formControlName="lastName"
+                [ngClass]="{ 'is-invalid': submitted && f['lastName'].errors }" required />
+              <div *ngIf="submitted && f['lastName'].errors" class="invalid-feedback">
+                <div *ngIf="f['lastName'].errors['required']">Last Name is required</div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label" for="university">University Name: </label>
+              <input autocomplete="off" class="form-control" id="universityName" type="text"
+                formControlName="university" [ngClass]="{ 'is-invalid': submitted && f['university'].errors }">
+              <div *ngIf="submitted && f['university'].errors" class="invalid-feedback">
+                <div *ngIf="f['university'].errors['required']">University Name is required</div>
+              </div>
+            </div>
+
+            <button class="btn btn-secondary" type="submit">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          Student List
+        </div>
+        <div class="card-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">University Name</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let student of students; let i = index">
+                <th scope="row">{{i + 1 }}</th>
+                <td>{{student.firstName}}</td>
+                <td>{{student.lastName}}</td>
+                <td>{{student.university}}</td>
+                <td>
+                  <div ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-danger" id="dropdownBasic1" ngbDropdownToggle>Action</button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                      <button (click)="editStudent(templateEdit, student)" ngbDropdownItem>Edit</button>
+                      <button (click)="deleteStudent(student)" ngbDropdownItem>Delete</button>
+                      <button (click)="viewStudent(templateView, student)" ngbDropdownItem>View</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #templateEdit let-modal>
+  <form [formGroup]="editForm" (ngSubmit)="onEditModalSubmit()">
+    <div class="modal-header">
+      <h4 class="modal-title">Edit Student</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group mb-3">
+        <label>First Name</label>
+        <input type="text" formControlName="firstName" class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && g['firstName'].errors }" />
+        <div *ngIf="submitted && g['firstName'].errors" class="invalid-feedback">
+          <div *ngIf="g['firstName'].errors['required']">First Name is required</div>
+        </div>
+      </div>
+      <div class="form-group mb-3">
+        <label class="form-label" for="last-name">Last Name: </label>
+        <input autocomplete="off" class="form-control" id="last-name" type="text" formControlName="lastName"
+          [ngClass]="{ 'is-invalid': submitted && g['lastName'].errors }" required />
+        <div *ngIf="submitted && g['lastName'].errors" class="invalid-feedback">
+          <div *ngIf="g['lastName'].errors['required']">Last Name is required</div>
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label class="form-label" for="university">University Name: </label>
+        <input autocomplete="off" class="form-control" id="universityName" type="text" formControlName="university"
+          [ngClass]="{ 'is-invalid': submitted && g['university'].errors }">
+        <div *ngIf="submitted && g['university'].errors" class="invalid-feedback">
+          <div *ngIf="g['university'].errors['required']">University Name is required</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <button type="button" class="btn btn-light" (click)="onEditClose()">Close</button>
+    </div>
+  </form>
+
+</ng-template>
+
+<ng-template #templateView let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">View Student</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-bordered table-responsive">
+      <thead>
+        <tr>
+          <th scope="col" colspan="1">First Name</th>
+          <td scope="col" colspan="1">{{student.firstName}}</td>
+        </tr>
+        <tr>
+          <th scope="col" colspan="1">Last Name</th>
+          <td scope="col" colspan="1">{{student.lastName}}</td>
+        </tr>
+        <tr>
+          <th scope="col" colspan="1">University Name</th>
+          <td scope="col" colspan="1">{{student.university}}
+          </td>
+        </tr>
+      </thead>
+    </table>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="onEditClose()">Close</button>
+  </div>
+
+</ng-template>
