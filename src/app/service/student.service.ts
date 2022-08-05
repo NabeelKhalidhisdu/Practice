@@ -23,10 +23,17 @@ export class StudentService {
 
   editStudent(student) {
     debugger
-    return this.http.put<Student[]>(`${this.getServerUrl()}/api/Student/${student.id}`, student)
+    return this.http.put<Student>(`${this.getServerUrl()}/api/Student/${student.id}`, student)
   }
 
   deleteStudent(student) {
-    return this.http.delete<Student[]>(`${this.getServerUrl()}/api/Student/${student.id}`)
+    return this.http.delete<Student>(`${this.getServerUrl()}/api/Student/${student.id}`)
+  }
+
+  getDivisions() {
+    return this.http.get<any>(`${this.getServerUrl()}/api/Division`)
+  }
+  getDistricts() {
+    return this.http.get<any>(`${this.getServerUrl()}/api/District`)
   }
 }

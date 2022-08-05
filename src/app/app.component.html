@@ -34,11 +34,39 @@
               </div>
             </div>
 
+            <div class="form-group mb-3">
+              <div class="col-md-12">
+                  <label class="form-label">Division *</label>
+                  <p-dropdown [options]="divisions" formControlName="divisionName" optionLabel="divisionName" optionValue="divisionId"
+                    [filter]="true" filterBy="divisionName" placeholder="Select a divison " [style]="{'width':'100%'}"
+                    [ngClass]="{ 'is-invalid': submitted && f['divisionName'].errors }"></p-dropdown>
+                  <div *ngIf="submitted && f['divisionName'].errors" class="invalid-feedback">
+                    <div *ngIf="f['divisionName'].errors['required']">District is required</div>
+                  </div>
+              </div>
+            </div>
+
+
+            <div class="form-group mb-3">
+              <div class="col-md-12">
+                  <label class="form-label">District *</label>
+                  <p-dropdown [options]="filterDistrictById()" formControlName="districtName" optionLabel="districtName" optionValue="districtCode"
+                    [filter]="true" filterBy="districtName" placeholder="Select a district " [style]="{'width':'100%'}"
+                    [ngClass]="{ 'is-invalid': submitted && f['districtName'].errors }"></p-dropdown>
+                  <div *ngIf="submitted && f['districtName'].errors" class="invalid-feedback">
+                    <div *ngIf="f['districtName'].errors['required']">District is required</div>
+                  </div>
+              </div>
+            </div>
+
+
+
             <button class="btn btn-secondary" type="submit">Submit</button>
           </form>
         </div>
       </div>
     </div>
+
     <div class="col-md-6">
       <div class="card">
         <div class="card-header">

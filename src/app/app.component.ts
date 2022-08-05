@@ -16,8 +16,12 @@ export class AppComponent implements OnInit {
   form!: FormGroup;
   editForm!: FormGroup;
   students: Student[] = [];
+  divisions = [];
+  districts = [];
   student: Student;
+  selectedDistrict;
   submitted = false;
+  subDistricts: any[];
   constructor(
     private fb: FormBuilder,
     private studentService: StudentService,
@@ -28,7 +32,10 @@ export class AppComponent implements OnInit {
     this.form = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      university: ['', Validators.required]
+      university: ['', Validators.required],
+      divisionName: ['', Validators.required],
+      districtName: ['', Validators.required]
+      
     });
     this.editForm = this.fb.group({
       id: [null],
@@ -37,6 +44,32 @@ export class AppComponent implements OnInit {
       university: ['', Validators.required]
     });
     this.getStudent();
+    this.getDivisions();
+    this.getDistricts();
+  }
+  
+  getDivisions() {
+    this.studentService.getDivisions().subscribe(data => {
+      this.divisions = data;
+      this.divisions.sort((a, b) => {
+        let fa = a.divisionName.toLowerCase(),
+            fb = b.divisionName.toLowerCase();
+    
+        if (fa < fb) {
+            return -1;
+        }
+        if (fa > fb) {
+            return 1;
+        }
+        return 0;
+    });
+        
+    })
+  }
+  getDistricts() {
+    this.studentService.getDistricts().subscribe(data => {
+      this.districts = data;
+    })
   }
 
   get f() { return this.form.controls; }
@@ -49,8 +82,8 @@ export class AppComponent implements OnInit {
     const student = { ...this.form.value };
     debugger
     this.studentService.saveStudent(student).subscribe(data => {
-      // this.students.push(student);
-      this.getStudent();
+      this.students.push(data);
+      // this.getStudent();
       this.toastr.success('Data saved successfully', '', {
         positionClass: 'toast-bottom-right',
       });
@@ -81,17 +114,19 @@ export class AppComponent implements OnInit {
     const student = { ...this.editForm.value };
     this.studentService.editStudent(student).subscribe(data => {
       console.log(data);
-      this.getStudent();
+      // this.getStudent();
+      debugger
+      let updatedStudent = this.students.find(std => std.id == data.id);
+      let index = this.students.indexOf(updatedStudent);
+      if(index > -1) {
+        this.students[index] = updatedStudent;
+      }
       this.toastr.success('Data updated successfully', '', {
         positionClass: 'toast-bottom-right',
       });
       this.student = null;
       this.modalService.dismissAll();
-    },
-      (error) => {
-        console.log(error)
-        this.student = null;
-      }
+    }
     )
   }
   onEditClose() {
@@ -125,5 +160,14 @@ export class AppComponent implements OnInit {
       backdrop: 'static',
       keyboard: false,
     });
+  }
+
+  filterDistrictById() {
+    const selectedDivision = this.f['divisionName'].value;
+    // if(selectedDivision) {
+    //   this.subDistricts = this.districts.filter(district => district.districtId == selectedDivision.districtId);
+    // }
+    debugger
+    return this.districts.filter(district => district.districtId == selectedDivision);
   }
 }
