@@ -36,4 +36,8 @@ export class StudentService {
   getDistricts() {
     return this.http.get<any>(`${this.getServerUrl()}/api/District`)
   }
+
+  getTown() {
+    return this.http.get<any>(`${this.getServerUrl()}/api/Town`)
+  }
 }

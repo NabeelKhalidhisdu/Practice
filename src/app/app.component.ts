@@ -22,6 +22,7 @@ export class AppComponent implements OnInit {
   selectedDistrict;
   submitted = false;
   subDistricts: any[];
+  towns = [];
   constructor(
     private fb: FormBuilder,
     private studentService: StudentService,
@@ -33,42 +34,54 @@ export class AppComponent implements OnInit {
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       university: ['', Validators.required],
-      divisionName: ['', Validators.required],
-      districtName: ['', Validators.required]
-      
+      divisionId: ['', Validators.required],
+      districtId: ['', Validators.required],
+      townId: ['', Validators.required],
+
     });
     this.editForm = this.fb.group({
       id: [null],
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      university: ['', Validators.required]
+      university: ['', Validators.required],
+      divisionId: ['', Validators.required],
+      districtId: ['', Validators.required],
+      townId: ['', Validators.required],
     });
     this.getStudent();
     this.getDivisions();
     this.getDistricts();
+    this.getTowns();
   }
-  
+
   getDivisions() {
     this.studentService.getDivisions().subscribe(data => {
       this.divisions = data;
       this.divisions.sort((a, b) => {
         let fa = a.divisionName.toLowerCase(),
-            fb = b.divisionName.toLowerCase();
-    
+          fb = b.divisionName.toLowerCase();
+
         if (fa < fb) {
-            return -1;
+          return -1;
         }
         if (fa > fb) {
-            return 1;
+          return 1;
         }
         return 0;
-    });
-        
+      });
+
     })
   }
   getDistricts() {
     this.studentService.getDistricts().subscribe(data => {
       this.districts = data;
+    })
+  }
+
+  getTowns() {
+    this.studentService.getTown().subscribe(towns => {
+      this.towns = towns;
+      console.table(this.towns)
     })
   }
 
@@ -95,31 +108,29 @@ export class AppComponent implements OnInit {
   getStudent() {
     this.studentService.getStudent().subscribe(data => {
       this.students = data;
-      debugger
+
     })
   }
 
   editStudent(template, student: Student) {
     this.student = student
-    debugger
     const obj = Object.assign({}, this.editForm?.getRawValue(), student);
     this.editForm?.patchValue(obj);
     this.modalService.open(template, {
       backdrop: 'static',
       keyboard: false,
     });
-    // modalRef.componentInstance.student = student;
   }
   onEditModalSubmit() {
     const student = { ...this.editForm.value };
     this.studentService.editStudent(student).subscribe(data => {
       console.log(data);
-      // this.getStudent();
+      // this.getStudent();  
       debugger
       let updatedStudent = this.students.find(std => std.id == data.id);
       let index = this.students.indexOf(updatedStudent);
-      if(index > -1) {
-        this.students[index] = updatedStudent;
+      if (index > -1) {
+        this.students[index] = data;
       }
       this.toastr.success('Data updated successfully', '', {
         positionClass: 'toast-bottom-right',
@@ -162,12 +173,23 @@ export class AppComponent implements OnInit {
     });
   }
 
-  filterDistrictById() {
-    const selectedDivision = this.f['divisionName'].value;
-    // if(selectedDivision) {
-    //   this.subDistricts = this.districts.filter(district => district.districtId == selectedDivision.districtId);
-    // }
-    debugger
-    return this.districts.filter(district => district.districtId == selectedDivision);
+  filterDivisionByDistrict() {
+    const selectedDivision = this.f['divisionId'].value;
+    return this.districts.filter(district => district.divisionId === selectedDivision);
+  }
+
+  filterTownByDistrict() {
+    const selectedDistrict = this.f["districtId"].value
+    return this.towns.filter(town => town.districtCode === selectedDistrict);
+  }
+
+  filterEditDivisionByDistrict() {
+    const selectedDivision = this.g['divisionId'].value;
+    return this.districts.filter(district => district.divisionId === selectedDivision);
+  }
+
+  filterEditTownByDistrict() {
+    const selectedDistrict = this.g["districtId"].value
+    return this.towns.filter(town => town.districtCode === selectedDistrict);
   }
 }
